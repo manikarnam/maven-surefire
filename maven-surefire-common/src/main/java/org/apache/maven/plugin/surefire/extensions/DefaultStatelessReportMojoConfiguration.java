@@ -30,8 +30,8 @@ import java.util.Map;
  * Why Deprecated: The field {@code testClassMethodRunHistory} makes
  * {@link org.apache.maven.plugin.surefire.report.StatelessXmlReporter} stateful and overloads reporter by permanently
  * overriding XML using re-run feature. To fix this issue, the providers should use more events for re-run feature and
- * events bounding provider's execution. After provider's execution is finished, this reporter should be announced with
- * {@link StatelessReporterEvent event} only once per test class. All test report entries should be cached in
+ * events bounding provider's execution. After provider's execution is finished, this reporter should be announced
+ * only once per test class. All test report entries should be cached in
  * {@link org.apache.maven.plugin.surefire.report.TestSetRunListener} keeping it already stateful.
  */
 @Deprecated

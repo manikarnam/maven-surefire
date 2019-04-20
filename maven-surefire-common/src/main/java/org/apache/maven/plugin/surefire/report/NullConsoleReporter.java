@@ -22,7 +22,7 @@ package org.apache.maven.plugin.surefire.report;
 import java.util.List;
 
 import org.apache.maven.plugin.surefire.log.api.NullConsoleLogger;
-import org.apache.maven.surefire.report.ReportEntry;
+import org.apache.maven.surefire.report.TestSetReportEntry;
 
 /**
  * ConsoleReporter doing nothing rather than using null.
@@ -42,7 +42,7 @@ class NullConsoleReporter
     }
 
     @Override
-    public void testSetStarting( ReportEntry report )
+    public void testSetStarting( TestSetReportEntry report )
     {
     }
 

@@ -70,6 +70,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
+                    <forkCount>1.0C</forkCount>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <statelessReporter implementation="org.apache.maven.plugin.surefire.extensions.JUnit5Xml30StatelessReporter">
                         <usePhrasedFileName>false</usePhrasedFileName>

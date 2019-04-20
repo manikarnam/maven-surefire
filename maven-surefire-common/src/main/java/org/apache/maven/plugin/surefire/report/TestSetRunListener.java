@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.maven.plugin.surefire.extensions.StatelessReporterEvent;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.plugin.surefire.runorder.StatisticsReporter;
+import org.apache.maven.surefire.extensions.ConsoleOutputReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 import org.apache.maven.surefire.report.ConsoleOutputReceiver;
 import org.apache.maven.surefire.report.ReportEntry;
@@ -55,11 +55,11 @@ public class TestSetRunListener
 
     private final TestSetStats detailsForThis;
 
-    private final TestcycleConsoleOutputReceiver consoleOutputReceiver;
+    private final ConsoleOutputReportEventListener consoleOutputReceiver;
 
     private final boolean briefOrPlainFormat;
 
-    private final StatelessReportEventListener<StatelessReporterEvent> simpleXMLReporter;
+    private final StatelessReportEventListener<WrappedReportEntry, TestSetStats> simpleXMLReporter;
 
     private final ConsoleReporter consoleReporter;
 
@@ -75,8 +75,8 @@ public class TestSetRunListener
 
     @SuppressWarnings( "checkstyle:parameternumber" )
     public TestSetRunListener( ConsoleReporter consoleReporter, FileReporter fileReporter,
-                               StatelessReportEventListener<StatelessReporterEvent> simpleXMLReporter,
-                               TestcycleConsoleOutputReceiver consoleOutputReceiver,
+                               StatelessReportEventListener<WrappedReportEntry, TestSetStats> simpleXMLReporter,
+                               ConsoleOutputReportEventListener consoleOutputReceiver,
                                StatisticsReporter statisticsReporter, boolean trimStackTrace,
                                boolean isPlainFormat, boolean briefOrPlainFormat )
     {
@@ -185,7 +185,7 @@ public class TestSetRunListener
         final List<String> testResults =
                 briefOrPlainFormat ? detailsForThis.getTestResults() : Collections.<String>emptyList();
         fileReporter.testSetCompleted( wrap, detailsForThis, testResults );
-        simpleXMLReporter.testSetCompleted( new StatelessReporterEvent( this, wrap, detailsForThis ) );
+        simpleXMLReporter.testSetCompleted( wrap, detailsForThis );
         statisticsReporter.testSetCompleted();
         consoleReporter.testSetCompleted( wrap, detailsForThis, testResults );
         consoleOutputReceiver.testSetCompleted( wrap );

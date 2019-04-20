@@ -22,22 +22,16 @@ package org.apache.maven.surefire.extensions;
 import org.apache.maven.surefire.report.TestSetReportEntry;
 
 /**
- * Creates a report upon handled event "<em>testSetCompleted</em>".
- * <br>
- * Defaults to <em>org.apache.maven.plugin.surefire.report.StatelessXmlReporter</em>.
+ * Extension listener for logger.
+ * The signature can be changed between major, minor versions or milestones.
  *
- * author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
+ * @author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
  * @since 3.0.0-M4
- * @param <R> report entry type, see <em>WrappedReportEntry</em> from module the <em>maven-surefire-common</em>
- * @param <S> test-set statistics, see <em>TestSetStats</em> from module the <em>maven-surefire-common</em>
  */
-public interface StatelessReportEventListener<R extends TestSetReportEntry, S>
+public interface ConsoleOutputReportEventListener
 {
-    /**
-     * The callback is called after the test class has been completed and the state of report is final.
-     *
-     * @param report <em>WrappedReportEntry</em>
-     * @param testSetStats <em>TestSetStats</em>
-     */
-     void testSetCompleted( R report, S testSetStats );
+    void testSetStarting( TestSetReportEntry reportEntry );
+    void testSetCompleted( TestSetReportEntry report );
+    void close();
+    void writeTestOutput( String output, boolean newLine, boolean stdout );
 }

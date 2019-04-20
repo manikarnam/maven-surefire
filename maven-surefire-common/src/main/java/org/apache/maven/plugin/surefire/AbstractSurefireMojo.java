@@ -25,9 +25,11 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.surefire.extensions.DefaultConsoleOutputReporter;
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReportMojoConfiguration;
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReporter;
-import org.apache.maven.plugin.surefire.extensions.StatelessReporterEvent;
+import org.apache.maven.plugin.surefire.report.TestSetStats;
+import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
@@ -72,6 +74,7 @@ import org.apache.maven.surefire.booter.StartupConfiguration;
 import org.apache.maven.surefire.booter.SurefireBooterForkException;
 import org.apache.maven.surefire.booter.SurefireExecutionException;
 import org.apache.maven.surefire.cli.CommandLineOption;
+import org.apache.maven.surefire.extensions.ConsoleOutputReporter;
 import org.apache.maven.surefire.extensions.StatelessReporter;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterConfiguration;
@@ -163,8 +166,9 @@ public abstract class AbstractSurefireMojo
     /**
      * Note: use the legacy system property <em>disableXmlReport</em> set to {@code true} to disable the report.
      */
-    @Parameter
-    private StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration> statelessReporter;
+
+    @Parameter private
+    StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> statelessReporter;
 
     /**
      * Information about this plugin, mainly used to lookup this plugin's configuration from the currently executing
@@ -1946,19 +1950,21 @@ public abstract class AbstractSurefireMojo
 
     private StartupReportConfiguration getStartupReportConfiguration( String configChecksum, boolean isForkMode )
     {
-        StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration> xmlReporter =
+        StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> xmlReporter =
                 statelessReporter == null
                         ? new DefaultStatelessReporter( /*todo call def. constr.*/ isDisableXmlReport(), "3.0" )
                         : statelessReporter;
 
         xmlReporter.setDisable( isDisableXmlReport() ); // todo change to Boolean in the version 3.0.0-M6
 
+        ConsoleOutputReporter consoleOutputReporter = new DefaultConsoleOutputReporter();
+
         return new StartupReportConfiguration( isUseFile(), isPrintSummary(), getReportFormat(),
                                                isRedirectTestOutputToFile(),
                                                getReportsDirectory(), isTrimStackTrace(), getReportNameSuffix(),
                                                getStatisticsFile( configChecksum ), requiresRunHistory(),
                                                getRerunFailingTestsCount(), getReportSchemaLocation(), getEncoding(),
-                                               isForkMode, xmlReporter );
+                                               isForkMode, xmlReporter, consoleOutputReporter );
     }
 
     private boolean isSpecificTestSpecified()

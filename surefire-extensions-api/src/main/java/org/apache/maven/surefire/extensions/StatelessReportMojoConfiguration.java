@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * Configuration passed to the constructor of default reporter
  * <em>org.apache.maven.plugin.surefire.report.StatelessXmlReporter</em>.
- * Signatures can be changed between major or minor versions.
+ * Signatures can be changed between major, minor versions or milestones.
  */
 public class StatelessReportMojoConfiguration
 {

@@ -30,6 +30,7 @@
     </parent>
 
     <artifactId>surefire-extensions-api</artifactId>
+    <name>Surefire Extensions API</name>
 
     <dependencies>
         <dependency>

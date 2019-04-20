@@ -19,6 +19,7 @@ package org.apache.maven.plugin.surefire.report;
  * under the License.
  */
 
+import org.apache.maven.surefire.extensions.StatelessTestsetInfoFileReportEventListener;
 import org.apache.maven.surefire.report.ReporterException;
 
 import java.io.BufferedWriter;
@@ -40,41 +41,43 @@ import static org.apache.maven.surefire.util.internal.StringUtils.isNotBlank;
  * @author Kristian Rosenvold
  */
 public class FileReporter
+        extends StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats>
 {
-    private final File reportsDirectory;
-    private final String reportNameSuffix;
-    private final Charset encoding;
+    private final boolean usePhrasedFileName;
 
-    public FileReporter( File reportsDirectory, String reportNameSuffix, Charset encoding )
+    public FileReporter( File reportsDirectory, String reportNameSuffix, Charset encoding, boolean usePhrasedFileName )
     {
-        this.reportsDirectory = reportsDirectory;
-        this.reportNameSuffix = reportNameSuffix;
-        this.encoding = encoding;
+        super( reportsDirectory, reportNameSuffix, encoding );
+        this.usePhrasedFileName = usePhrasedFileName;
     }
 
     static File getReportFile( File reportsDirectory, String reportEntryName, String reportNameSuffix,
-                                      String fileExtension )
+                               String fileExtension )
     {
         String fileName =
                 reportEntryName + ( isNotBlank( reportNameSuffix ) ? "-" + reportNameSuffix : "" ) + fileExtension;
         return new File( reportsDirectory, stripIllegalFilenameChars( fileName ) );
     }
 
+    @Override
     public void testSetCompleted( WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults )
     {
-        File reportFile = getReportFile( reportsDirectory, report.getSourceName(), reportNameSuffix, ".txt" );
+        File reportFile = getReportFile( getReportsDirectory(),
+                                         usePhrasedFileName ? report.getReportSourceName() : report.getSourceName(),
+                                         getReportNameSuffix(),
+                              ".txt" );
 
         File reportDir = reportFile.getParentFile();
 
         // noinspection ResultOfMethodCallIgnored
         reportDir.mkdirs();
 
-        try ( BufferedWriter writer = createFileReporterWriter( reportFile, encoding ) )
+        try ( BufferedWriter writer = createFileReporterWriter( reportFile, getEncoding() ) )
         {
             writer.write( "-------------------------------------------------------------------------------" );
             writer.newLine();
 
-            writer.write( "Test set: " + report.getReportSourceName() );
+            writer.write( "Test set: " + report.getSourceName() );
             writer.newLine();
 
             writer.write( "-------------------------------------------------------------------------------" );

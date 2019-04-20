@@ -20,13 +20,12 @@ package org.apache.maven.plugin.surefire;
  */
 
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReportMojoConfiguration;
-import org.apache.maven.plugin.surefire.extensions.StatelessReporterEvent;
-import org.apache.maven.plugin.surefire.report.ConsoleOutputFileReporter;
-import org.apache.maven.plugin.surefire.report.DirectConsoleOutput;
 import org.apache.maven.plugin.surefire.report.FileReporter;
-import org.apache.maven.plugin.surefire.report.TestcycleConsoleOutputReceiver;
+import org.apache.maven.plugin.surefire.report.TestSetStats;
 import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.plugin.surefire.runorder.StatisticsReporter;
+import org.apache.maven.surefire.extensions.ConsoleOutputReportEventListener;
+import org.apache.maven.surefire.extensions.ConsoleOutputReporter;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReporter;
 
@@ -84,17 +83,21 @@ public final class StartupReportConfiguration
 
     private final boolean isForkMode;
 
-    private final StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration> xmlReporter;
+    private final
+    StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> xmlReporter;
+
+    private final ConsoleOutputReporter consoleOutputReporter;
 
     private StatisticsReporter statisticsReporter;
 
     @SuppressWarnings( "checkstyle:parameternumber" )
     public StartupReportConfiguration( boolean useFile, boolean printSummary, String reportFormat,
-                   boolean redirectTestOutputToFile,
-                   @Nonnull File reportsDirectory, boolean trimStackTrace, String reportNameSuffix,
-                   File statisticsFile, boolean requiresRunHistory, int rerunFailingTestsCount,
-                   String xsdSchemaLocation, String encoding, boolean isForkMode,
-                   StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration> xmlReporter )
+               boolean redirectTestOutputToFile,
+               @Nonnull File reportsDirectory, boolean trimStackTrace, String reportNameSuffix,
+               File statisticsFile, boolean requiresRunHistory, int rerunFailingTestsCount,
+               String xsdSchemaLocation, String encoding, boolean isForkMode,
+               StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> xmlReporter,
+               ConsoleOutputReporter consoleOutputReporter )
     {
         this.useFile = useFile;
         this.printSummary = printSummary;
@@ -113,6 +116,7 @@ public final class StartupReportConfiguration
         this.encoding = charset == null ? UTF_8 : Charset.forName( charset );
         this.isForkMode = isForkMode;
         this.xmlReporter = xmlReporter;
+        this.consoleOutputReporter = consoleOutputReporter;
     }
 
     public boolean isUseFile()
@@ -155,7 +159,8 @@ public final class StartupReportConfiguration
         return rerunFailingTestsCount;
     }
 
-    public StatelessReportEventListener<StatelessReporterEvent> instantiateStatelessXmlReporter( Integer forkNumber )
+    public StatelessReportEventListener<WrappedReportEntry, TestSetStats> instantiateStatelessXmlReporter(
+            Integer forkNumber )
     {
         assert ( forkNumber == null ) == !isForkMode;
 
@@ -172,13 +177,13 @@ public final class StartupReportConfiguration
                 new DefaultStatelessReportMojoConfiguration( resolveReportsDirectory( forkNumber ), reportNameSuffix,
                         trimStackTrace, rerunFailingTestsCount, xsdSchemaLocation, testClassMethodRunHistory );
 
-        return isDisableXmlReport() ? null : xmlReporter.createStatelessReportEventListener( xmlReporterConfig );
+        return isDisableXmlReport() ? null : xmlReporter.createListener( xmlReporterConfig );
     }
 
     public FileReporter instantiateFileReporter( Integer forkNumber )
     {
         return isUseFile() && isBriefOrPlainFormat()
-            ? new FileReporter( resolveReportsDirectory( forkNumber ), reportNameSuffix, encoding )
+            ? new FileReporter( resolveReportsDirectory( forkNumber ), reportNameSuffix, encoding, false )
             : null;
     }
 
@@ -188,11 +193,12 @@ public final class StartupReportConfiguration
         return BRIEF.equals( fmt ) || PLAIN.equals( fmt );
     }
 
-    public TestcycleConsoleOutputReceiver instantiateConsoleOutputFileReporter( Integer forkNumber )
+    public ConsoleOutputReportEventListener instantiateConsoleOutputFileReporter( Integer forkNum )
     {
-        return isRedirectTestOutputToFile()
-            ? new ConsoleOutputFileReporter( resolveReportsDirectory( forkNumber ), reportNameSuffix, forkNumber )
-            : new DirectConsoleOutput( originalSystemOut, originalSystemErr );
+        ConsoleOutputReportEventListener outputReport = isRedirectTestOutputToFile()
+                ? consoleOutputReporter.createListener( resolveReportsDirectory( forkNum ), reportNameSuffix, forkNum )
+                : consoleOutputReporter.createListener( originalSystemOut, originalSystemErr );
+        return consoleOutputReporter.isDisable() ? null : outputReport;
     }
 
     public synchronized StatisticsReporter getStatisticsReporter()
@@ -244,8 +250,13 @@ public final class StartupReportConfiguration
         return forkNumber == null ? reportsDirectory : replaceForkThreadsInPath( reportsDirectory, forkNumber );
     }
 
-    public StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration> getXmlReporter()
+    public StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> getXmlReporter()
     {
         return xmlReporter;
+    }
+
+    public ConsoleOutputReporter getConsoleOutputReporter()
+    {
+        return consoleOutputReporter;
     }
 }

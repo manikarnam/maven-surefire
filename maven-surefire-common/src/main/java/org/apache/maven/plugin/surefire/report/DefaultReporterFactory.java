@@ -20,11 +20,11 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.StartupReportConfiguration;
-import org.apache.maven.plugin.surefire.extensions.StatelessReporterEvent;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.plugin.surefire.log.api.Level;
 import org.apache.maven.plugin.surefire.runorder.StatisticsReporter;
 import org.apache.maven.shared.utils.logging.MessageBuilder;
+import org.apache.maven.surefire.extensions.ConsoleOutputReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 import org.apache.maven.surefire.report.ReporterFactory;
 import org.apache.maven.surefire.report.RunListener;
@@ -126,16 +126,18 @@ public class DefaultReporterFactory
         return useNonNull( fileReporter, NullFileReporter.INSTANCE );
     }
 
-    private StatelessReportEventListener<StatelessReporterEvent> createSimpleXMLReporter()
+    private StatelessReportEventListener<WrappedReportEntry, TestSetStats> createSimpleXMLReporter()
     {
-        StatelessReportEventListener<StatelessReporterEvent> xmlReporter =
+        StatelessReportEventListener<WrappedReportEntry, TestSetStats> xmlReporter =
                 reportConfiguration.instantiateStatelessXmlReporter( forkNumber );
         return useNonNull( xmlReporter, NullStatelessXmlReporter.INSTANCE );
     }
 
-    private TestcycleConsoleOutputReceiver createConsoleOutputReceiver()
+    private ConsoleOutputReportEventListener createConsoleOutputReceiver()
     {
-        return reportConfiguration.instantiateConsoleOutputFileReporter( forkNumber );
+        ConsoleOutputReportEventListener outputReporter =
+                reportConfiguration.instantiateConsoleOutputFileReporter( forkNumber );
+        return useNonNull( outputReporter, NullConsoleOutputReceiver.INSTANCE );
     }
 
     private StatisticsReporter createStatisticsReporter()

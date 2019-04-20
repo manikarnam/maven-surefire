@@ -170,7 +170,9 @@
                     <forkMode>once</forkMode>
                     <argLine>-server -Xmx64m -XX:+UseG1GC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.awt.headless=true -Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
                     <includes>
-                        <include>org/apache/**/*IT*.java</include>
+                        <include>org/apache/**/Surefire1396CustomProviderClassPathIT.java</include>
+                        <include>org/apache/**/JUnitPlatformIT.java</include>
+                        <include>org/apache/**/JUnitPlatformEnginesIT.java</include>
                     </includes>
                     <!-- Pass current surefire version to the main suite so that it -->
                     <!-- can forward to all integration test projects. SUREFIRE-513 -->
@@ -201,13 +203,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <!-- todo dont skip since of failsafe:2.19 internal use if having src/main/java/... -->
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

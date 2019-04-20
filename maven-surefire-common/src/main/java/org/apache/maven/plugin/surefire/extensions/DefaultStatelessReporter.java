@@ -20,6 +20,8 @@ package org.apache.maven.plugin.surefire.extensions;
  */
 
 import org.apache.maven.plugin.surefire.report.StatelessXmlReporter;
+import org.apache.maven.plugin.surefire.report.TestSetStats;
+import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReporter;
 
@@ -30,7 +32,7 @@ import org.apache.maven.surefire.extensions.StatelessReporter;
  * @since 3.0.0-M4
  */
 public class DefaultStatelessReporter
-        extends StatelessReporter<StatelessReporterEvent, DefaultStatelessReportMojoConfiguration>
+        extends StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration>
 {
     /**
      * Activated in the injection point of MOJO.
@@ -52,7 +54,7 @@ public class DefaultStatelessReporter
     }
 
     @Override
-    public StatelessReportEventListener<StatelessReporterEvent> createStatelessReportEventListener(
+    public StatelessReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             DefaultStatelessReportMojoConfiguration configuration )
     {
         return new StatelessXmlReporter( configuration.getReportsDirectory(),

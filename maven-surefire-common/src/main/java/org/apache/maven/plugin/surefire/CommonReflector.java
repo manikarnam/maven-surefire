@@ -22,6 +22,7 @@ package org.apache.maven.plugin.surefire;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.plugin.surefire.report.DefaultReporterFactory;
 import org.apache.maven.surefire.booter.SurefireReflector;
+import org.apache.maven.surefire.extensions.ConsoleOutputReporter;
 import org.apache.maven.surefire.extensions.StatelessReporter;
 import org.apache.maven.surefire.util.SurefireReflectionException;
 
@@ -41,6 +42,7 @@ public class CommonReflector
     private final Class<?> startupReportConfiguration;
     private final Class<?> consoleLogger;
     private final Class<?> statelessReporter;
+    private final Class<?> consoleOutputReporter;
     private final ClassLoader surefireClassLoader;
 
     public CommonReflector( @Nonnull ClassLoader surefireClassLoader )
@@ -52,6 +54,7 @@ public class CommonReflector
             startupReportConfiguration = surefireClassLoader.loadClass( StartupReportConfiguration.class.getName() );
             consoleLogger = surefireClassLoader.loadClass( ConsoleLogger.class.getName() );
             statelessReporter = surefireClassLoader.loadClass( StatelessReporter.class.getName() );
+            consoleOutputReporter = surefireClassLoader.loadClass( ConsoleOutputReporter.class.getName() );
         }
         catch ( ClassNotFoundException e )
         {
@@ -75,7 +78,7 @@ public class CommonReflector
                                                            String.class, boolean.class, File.class,
                                                            boolean.class, String.class, File.class, boolean.class,
                                                            int.class, String.class, String.class, boolean.class,
-                                                           statelessReporter );
+                                                           statelessReporter, consoleOutputReporter );
         //noinspection BooleanConstructorCall
         Object[] params = { reporterConfiguration.isUseFile(), reporterConfiguration.isPrintSummary(),
             reporterConfiguration.getReportFormat(), reporterConfiguration.isRedirectTestOutputToFile(),
@@ -84,7 +87,9 @@ public class CommonReflector
             reporterConfiguration.getStatisticsFile(), reporterConfiguration.isRequiresRunHistory(),
             reporterConfiguration.getRerunFailingTestsCount(), reporterConfiguration.getXsdSchemaLocation(),
             reporterConfiguration.getEncoding().name(), reporterConfiguration.isForkMode(),
-            reporterConfiguration.getXmlReporter().clone( surefireClassLoader ) };
+            reporterConfiguration.getXmlReporter().clone( surefireClassLoader ),
+            reporterConfiguration.getConsoleOutputReporter().clone( surefireClassLoader )
+        };
         return newInstance( constructor, params );
     }
 

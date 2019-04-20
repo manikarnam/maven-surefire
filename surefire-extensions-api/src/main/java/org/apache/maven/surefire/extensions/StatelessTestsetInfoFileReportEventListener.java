@@ -21,66 +21,47 @@ package org.apache.maven.surefire.extensions;
 
 import org.apache.maven.surefire.report.TestSetReportEntry;
 
-import static org.apache.maven.surefire.util.internal.StringUtils.isBlank;
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
- * Extension for stateless reporter.
+ * Extension listener for stateless file reporter of test-set.
  * Signatures can be changed between major, minor versions or milestones.
  *
  * @author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
  * @since 3.0.0-M4
  * @param <R> report entry type, see <em>WrappedReportEntry</em> from module the <em>maven-surefire-common</em>
  * @param <S> test-set statistics, see <em>TestSetStats</em> from module the <em>maven-surefire-common</em>
- * @param <C> mojo config, see <em>DefaultStatelessReportMojoConfiguration</em> from <em>maven-surefire-common</em>
  */
-public abstract class StatelessReporter<R extends TestSetReportEntry, S, C extends StatelessReportMojoConfiguration>
+public abstract class StatelessTestsetInfoFileReportEventListener<R extends TestSetReportEntry, S>
 {
-    /**
-     * {@code false} by default
-     */
-    //todo remove isDisableXmlReport() in AbstractSurefireMojo and use this param instead
-    private boolean disable;
+    private final File reportsDirectory;
+    private final String reportNameSuffix;
+    private final Charset encoding;
 
-    /**
-     * Version of reporter. It is version <em>3.0</em> used by default in XML reporter.
-     */
-    private String version;
-
-    /**
-     * Creates reporter.
-     *
-     * @return reporter object
-     */
-    public abstract StatelessReportEventListener<R, S> createListener( C configuration );
-
-    public abstract Object clone( ClassLoader target );
-
-    public boolean isDisable()
+    public StatelessTestsetInfoFileReportEventListener( File reportsDirectory, String reportNameSuffix,
+                                                        Charset encoding )
     {
-        return disable;
+        this.reportsDirectory = reportsDirectory;
+        this.reportNameSuffix = reportNameSuffix;
+        this.encoding = encoding;
     }
 
-    public void setDisable( boolean disable )
+    public abstract void testSetCompleted( R report, S testSetStats, List<String> testResults );
+
+    protected File getReportsDirectory()
     {
-        this.disable = disable;
+        return reportsDirectory;
     }
 
-    public String getVersion()
+    protected String getReportNameSuffix()
     {
-        return isBlank( version ) ? "3.0" : version;
+        return reportNameSuffix;
     }
 
-    public void setVersion( String version )
+    protected Charset getEncoding()
     {
-        this.version = version;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "StatelessReporter{"
-                + "version=" + getVersion()
-                + ", disable=" + isDisable()
-                + '}';
+        return encoding;
     }
 }

@@ -19,39 +19,34 @@ package org.apache.maven.surefire.extensions;
  * under the License.
  */
 
-import org.apache.maven.surefire.report.TestSetReportEntry;
+import java.io.File;
+import java.io.PrintStream;
 
 import static org.apache.maven.surefire.util.internal.StringUtils.isBlank;
 
 /**
- * Extension for stateless reporter.
- * Signatures can be changed between major, minor versions or milestones.
+ * Extension for logger.
+ * The signature can be changed between major, minor versions or milestones.
  *
  * @author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
  * @since 3.0.0-M4
- * @param <R> report entry type, see <em>WrappedReportEntry</em> from module the <em>maven-surefire-common</em>
- * @param <S> test-set statistics, see <em>TestSetStats</em> from module the <em>maven-surefire-common</em>
- * @param <C> mojo config, see <em>DefaultStatelessReportMojoConfiguration</em> from <em>maven-surefire-common</em>
  */
-public abstract class StatelessReporter<R extends TestSetReportEntry, S, C extends StatelessReportMojoConfiguration>
+public abstract class ConsoleOutputReporter
 {
     /**
      * {@code false} by default
      */
-    //todo remove isDisableXmlReport() in AbstractSurefireMojo and use this param instead
     private boolean disable;
 
     /**
-     * Version of reporter. It is version <em>3.0</em> used by default in XML reporter.
+     * The content is encoded <em>UTF-8</em> by default.
      */
-    private String version;
+    private String encoding;
 
-    /**
-     * Creates reporter.
-     *
-     * @return reporter object
-     */
-    public abstract StatelessReportEventListener<R, S> createListener( C configuration );
+    public abstract ConsoleOutputReportEventListener createListener( File reportsDirectory, String reportNameSuffix,
+                                                                     Integer forkNumber );
+
+    public abstract ConsoleOutputReportEventListener createListener( PrintStream out, PrintStream err );
 
     public abstract Object clone( ClassLoader target );
 
@@ -65,22 +60,22 @@ public abstract class StatelessReporter<R extends TestSetReportEntry, S, C exten
         this.disable = disable;
     }
 
-    public String getVersion()
+    public String getEncoding()
     {
-        return isBlank( version ) ? "3.0" : version;
+        return isBlank( encoding ) ? "UTF-8" : encoding;
     }
 
-    public void setVersion( String version )
+    public void setEncoding( String encoding )
     {
-        this.version = version;
+        this.encoding = encoding;
     }
 
     @Override
     public String toString()
     {
-        return "StatelessReporter{"
-                + "version=" + getVersion()
-                + ", disable=" + isDisable()
+        return "ConsoleOutputReporter{"
+                + "disable=" + isDisable()
+                + ", encoding=" + getEncoding()
                 + '}';
     }
 }

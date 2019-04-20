@@ -21,57 +21,43 @@ package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.report.TestSetReportEntry;
 
-import java.io.PrintStream;
-
-import static java.util.Objects.requireNonNull;
-
 /**
- * Outputs test system out/system err directly to the console
- * <br>
- * Just a step on the road to getting the separation of reporting concerns
- * operating properly.
+ * TestcycleConsoleOutputReceiver doing nothing rather than using null.
  *
- * @author Kristian Rosenvold
+ * @author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
+ * @since 3.0.0-M4
  */
-public class DirectConsoleOutput
+public class NullConsoleOutputReceiver
     implements TestcycleConsoleOutputReceiver
 {
-    private final PrintStream sout;
 
-    private final PrintStream serr;
+    static final NullConsoleOutputReceiver INSTANCE = new NullConsoleOutputReceiver();
 
-    public DirectConsoleOutput( PrintStream sout, PrintStream serr )
+    private NullConsoleOutputReceiver()
     {
-        this.sout = requireNonNull( sout );
-        this.serr = requireNonNull( serr );
-    }
-
-    @Override
-    public void writeTestOutput( String output, boolean newLine, boolean stdout )
-    {
-        PrintStream stream = stdout ? sout : serr;
-        if ( newLine )
-        {
-            stream.println( output );
-        }
-        else
-        {
-            stream.print( output );
-        }
     }
 
     @Override
     public void testSetStarting( TestSetReportEntry reportEntry )
     {
+
     }
 
     @Override
     public void testSetCompleted( TestSetReportEntry report )
     {
+
     }
 
     @Override
     public void close()
     {
+
+    }
+
+    @Override
+    public void writeTestOutput( String output, boolean newLine, boolean stdout )
+    {
+
     }
 }

@@ -23,8 +23,9 @@ import java.util.List;
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.shared.utils.logging.MessageBuilder;
-import org.apache.maven.surefire.report.ReportEntry;
 import org.apache.maven.plugin.surefire.log.api.Level;
+import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEventListener;
+import org.apache.maven.surefire.report.TestSetReportEntry;
 
 import static org.apache.maven.plugin.surefire.log.api.Level.resolveLevel;
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
@@ -37,6 +38,7 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  * @author Kristian Rosenvold
  */
 public class ConsoleReporter
+        extends StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats>
 {
     public static final String BRIEF = "brief";
 
@@ -44,24 +46,20 @@ public class ConsoleReporter
 
     private static final String TEST_SET_STARTING_PREFIX = "Running ";
 
-    private final ConsoleLogger logger;
-
     public ConsoleReporter( ConsoleLogger logger )
     {
-        this.logger = logger;
+        super( logger );
     }
 
-    public ConsoleLogger getConsoleLogger()
-    {
-        return logger;
-    }
-
-    public void testSetStarting( ReportEntry report )
+    @Override
+    public void testSetStarting( TestSetReportEntry report )
     {
         MessageBuilder builder = buffer();
-        logger.info( concatenateWithTestGroup( builder.a( TEST_SET_STARTING_PREFIX ), report ) );
+        getConsoleLogger()
+                .info( concatenateWithTestGroup( builder.a( TEST_SET_STARTING_PREFIX ), report ) );
     }
 
+    @Override
     public void testSetCompleted( WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults )
     {
         boolean success = testSetStats.getCompletedCount() > 0;
@@ -78,6 +76,7 @@ public class ConsoleReporter
         }
     }
 
+    @Override
     public void reset()
     {
     }
@@ -87,13 +86,16 @@ public class ConsoleReporter
         switch ( level )
         {
             case FAILURE:
-                logger.error( message );
+                getConsoleLogger()
+                        .error( message );
                 break;
             case UNSTABLE:
-                logger.warning( message );
+                getConsoleLogger()
+                        .warning( message );
                 break;
             default:
-                logger.info( message );
+                getConsoleLogger()
+                        .info( message );
         }
     }
 }

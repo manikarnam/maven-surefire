@@ -20,7 +20,6 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.booterclient.output.InPluginProcessDumpSingleton;
-import org.apache.maven.plugin.surefire.extensions.StatelessReporterEvent;
 import org.apache.maven.shared.utils.xml.PrettyPrintXMLWriter;
 import org.apache.maven.shared.utils.xml.XMLWriter;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
@@ -85,7 +84,7 @@ import static org.apache.maven.surefire.util.internal.StringUtils.isBlank;
  */
 @Deprecated // this is no more stateless due to existence of testClassMethodRunHistoryMap since of 2.19. Rename to StatefulXmlReporter in 3.0.
 public class StatelessXmlReporter
-        implements StatelessReportEventListener<StatelessReporterEvent>
+        implements StatelessReportEventListener<WrappedReportEntry, TestSetStats>
 {
     private final File reportsDirectory;
 
@@ -131,11 +130,6 @@ public class StatelessXmlReporter
     }
 
     @Override
-    public void testSetCompleted( StatelessReporterEvent event )
-    {
-        testSetCompleted( event.getTestSetReportEntry(), event.getTestSetStats() );
-    }
-
     public void testSetCompleted( WrappedReportEntry testSetReportEntry, TestSetStats testSetStats )
     {
         Map<String, Map<String, List<WrappedReportEntry>>> classMethodStatistics =

@@ -20,6 +20,8 @@ package org.apache.maven.plugin.surefire.extensions;
  */
 
 import org.apache.maven.plugin.surefire.report.StatelessXmlReporter;
+import org.apache.maven.plugin.surefire.report.TestSetStats;
+import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 
 /**
@@ -101,7 +103,7 @@ public class JUnit5Xml30StatelessReporter
     }
 
     @Override
-    public StatelessReportEventListener<StatelessReporterEvent> createStatelessReportEventListener(
+    public StatelessReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             DefaultStatelessReportMojoConfiguration configuration )
     {
         return new StatelessXmlReporter( configuration.getReportsDirectory(),
@@ -140,5 +142,18 @@ public class JUnit5Xml30StatelessReporter
         {
             throw new IllegalStateException( e.getLocalizedMessage() );
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "StatelessReporter{"
+                + "version=" + getVersion()
+                + ", disable=" + isDisable()
+                + ", usePhrasedFileName=" + getUsePhrasedFileName()
+                + ", usePhrasedTestSuiteClassName=" + getUsePhrasedTestSuiteClassName()
+                + ", usePhrasedTestCaseClassName=" + getUsePhrasedTestCaseClassName()
+                + ", usePhrasedTestCaseMethodName=" + getUsePhrasedTestCaseMethodName()
+                + '}';
     }
 }

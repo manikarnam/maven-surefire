@@ -28,6 +28,7 @@ import java.util.Queue;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.surefire.StartupReportConfiguration;
+import org.apache.maven.plugin.surefire.extensions.DefaultConsoleOutputReporter;
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReporter;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.shared.utils.logging.MessageUtils;
@@ -70,7 +71,7 @@ public class DefaultReporterFactoryTest
         StartupReportConfiguration reportConfig =
                 new StartupReportConfiguration( true, true, "PLAIN", false, reportsDirectory, false, null,
                         new File( reportsDirectory, "TESTHASH" ), false, 1, null, null, false,
-                        new DefaultStatelessReporter() );
+                        new DefaultStatelessReporter(), new DefaultConsoleOutputReporter() );
 
         DummyTestReporter reporter = new DummyTestReporter();
 
