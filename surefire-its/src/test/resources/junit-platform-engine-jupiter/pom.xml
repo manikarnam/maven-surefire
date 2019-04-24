@@ -76,7 +76,7 @@
                         <disable>false</disable>
                         <version>3.0</version>
                         <usePhrasedFileName>false</usePhrasedFileName>
-                        <usePhrasedTestSuiteClassName>false</usePhrasedTestSuiteClassName>
+                        <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
                         <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
                         <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
                     </statelessReporter>

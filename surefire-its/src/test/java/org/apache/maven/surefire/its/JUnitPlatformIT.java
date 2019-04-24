@@ -31,6 +31,11 @@ import static org.apache.maven.surefire.its.fixture.HelperAssertions.convertUnic
 public class JUnitPlatformIT
         extends SurefireJUnit4IntegrationTestCase
 {
+    private static final String XML_TESTSUITE_FRAGMENT =
+            "<testsuite xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation="
+                    + "\"https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd\" "
+                    + "version=\"3.0\" name=\"&lt;&lt; ✨ &gt;&gt;\"";
+
     @Before
     public void setUp()
     {
@@ -74,8 +79,9 @@ public class JUnitPlatformIT
 
 
         validator.getSurefireReportsFile( "TEST-junitplatformenginejupiter.DisplayNameTest.xml", UTF_8 )
-        .assertContainsText( "testcase name=\"73$71 ✔\" classname=\"&lt;&lt; ✨ &gt;&gt;\"" )
-        .assertContainsText( "testcase name=\"73$72 ✔\" classname=\"&lt;&lt; ✨ &gt;&gt;\"" );
+                .assertContainsText( "testcase name=\"73$71 ✔\" classname=\"&lt;&lt; ✨ &gt;&gt;\"" )
+                .assertContainsText( "testcase name=\"73$72 ✔\" classname=\"&lt;&lt; ✨ &gt;&gt;\"" )
+                .assertContainsText( XML_TESTSUITE_FRAGMENT );
     }
 
     @Test
