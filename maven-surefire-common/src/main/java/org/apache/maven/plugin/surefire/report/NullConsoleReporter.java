@@ -38,7 +38,7 @@ class NullConsoleReporter
 
     private NullConsoleReporter()
     {
-        super( new NullConsoleLogger() );
+        super( new NullConsoleLogger(), false, false );
     }
 
     @Override

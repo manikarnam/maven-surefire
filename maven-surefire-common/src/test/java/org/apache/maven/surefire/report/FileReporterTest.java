@@ -45,7 +45,7 @@ public class FileReporterTest
         reportEntry = new SimpleReportEntry( getClass().getName(), null, testName, null );
         WrappedReportEntry wrappedReportEntry =
             new WrappedReportEntry( reportEntry, ReportEntryType.SUCCESS, 12, null, null );
-        reporter = new FileReporter( reportDir, null, Charset.defaultCharset(), false );
+        reporter = new FileReporter( reportDir, null, Charset.defaultCharset(), false, false, false );
         reporter.testSetCompleted( wrappedReportEntry, createTestSetStats(), new ArrayList<String>() );
 
         File expectedReportFile = new File( reportDir, testName + ".txt" );
@@ -67,7 +67,7 @@ public class FileReporterTest
         reportEntry = new SimpleReportEntry( getClass().getName(), null, testName, null );
         WrappedReportEntry wrappedReportEntry =
             new WrappedReportEntry( reportEntry, ReportEntryType.SUCCESS, 12, null, null );
-        reporter = new FileReporter( reportDir, suffixText, Charset.defaultCharset(), false );
+        reporter = new FileReporter( reportDir, suffixText, Charset.defaultCharset(), false, false, false );
         reporter.testSetCompleted( wrappedReportEntry, createTestSetStats(), new ArrayList<String>() );
 
         File expectedReportFile = new File( reportDir, testName + "-" + suffixText + ".txt" );

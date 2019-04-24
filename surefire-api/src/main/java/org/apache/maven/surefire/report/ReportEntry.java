@@ -98,4 +98,11 @@ public interface ReportEntry
      * @return A string with the test case name and group/category, or just the name.
      */
     String getNameWithGroup();
+
+    /**
+     * A source text of the test case together with the group or category (if any exists).
+     *
+     * @return A string with the test case text and group/category, or just the source text.
+     */
+    String getReportNameWithGroup();
 }

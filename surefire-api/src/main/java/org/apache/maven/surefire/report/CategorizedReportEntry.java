@@ -21,6 +21,7 @@ package org.apache.maven.surefire.report;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Kristian Rosenvold
@@ -86,6 +87,12 @@ public class CategorizedReportEntry
     }
 
     @Override
+    public String getReportNameWithGroup()
+    {
+        return isNameWithGroup() ? getSourceText() + GROUP_PREFIX + getGroup() + GROUP_SUFIX : getSourceText();
+    }
+
+    @Override
     public boolean equals( Object o )
     {
         if ( this == o )
@@ -103,8 +110,7 @@ public class CategorizedReportEntry
 
         CategorizedReportEntry that = (CategorizedReportEntry) o;
 
-        return !( group != null ? !group.equals( that.group ) : that.group != null );
-
+        return Objects.equals( group, that.group );
     }
 
     @Override

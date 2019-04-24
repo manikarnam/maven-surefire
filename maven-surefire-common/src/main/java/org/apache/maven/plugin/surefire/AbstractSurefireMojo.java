@@ -28,6 +28,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.surefire.extensions.DefaultConsoleOutputReporter;
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReportMojoConfiguration;
 import org.apache.maven.plugin.surefire.extensions.DefaultStatelessReporter;
+import org.apache.maven.plugin.surefire.extensions.DefaultStatelessTestsetInfoReporter;
 import org.apache.maven.plugin.surefire.report.TestSetStats;
 import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.plugins.annotations.Component;
@@ -76,6 +77,7 @@ import org.apache.maven.surefire.booter.SurefireExecutionException;
 import org.apache.maven.surefire.cli.CommandLineOption;
 import org.apache.maven.surefire.extensions.ConsoleOutputReporter;
 import org.apache.maven.surefire.extensions.StatelessReporter;
+import org.apache.maven.surefire.extensions.StatelessTestsetInfoReporter;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterConfiguration;
 import org.apache.maven.surefire.suite.RunResult;
@@ -166,9 +168,14 @@ public abstract class AbstractSurefireMojo
     /**
      * Note: use the legacy system property <em>disableXmlReport</em> set to {@code true} to disable the report.
      */
-
     @Parameter private
     StatelessReporter<WrappedReportEntry, TestSetStats, DefaultStatelessReportMojoConfiguration> statelessReporter;
+
+    @Parameter
+    private ConsoleOutputReporter consoleOutputReporter;
+
+    @Parameter
+    private StatelessTestsetInfoReporter<WrappedReportEntry, TestSetStats> statelessTestsetInfoReporter;
 
     /**
      * Information about this plugin, mainly used to lookup this plugin's configuration from the currently executing
@@ -1957,14 +1964,19 @@ public abstract class AbstractSurefireMojo
 
         xmlReporter.setDisable( isDisableXmlReport() ); // todo change to Boolean in the version 3.0.0-M6
 
-        ConsoleOutputReporter consoleOutputReporter = new DefaultConsoleOutputReporter();
+        ConsoleOutputReporter outReporter =
+                consoleOutputReporter == null ? new DefaultConsoleOutputReporter() : consoleOutputReporter;
+
+        StatelessTestsetInfoReporter<WrappedReportEntry, TestSetStats> testsetReporter =
+                statelessTestsetInfoReporter == null
+                        ? new DefaultStatelessTestsetInfoReporter() : statelessTestsetInfoReporter;
 
         return new StartupReportConfiguration( isUseFile(), isPrintSummary(), getReportFormat(),
                                                isRedirectTestOutputToFile(),
                                                getReportsDirectory(), isTrimStackTrace(), getReportNameSuffix(),
                                                getStatisticsFile( configChecksum ), requiresRunHistory(),
                                                getRerunFailingTestsCount(), getReportSchemaLocation(), getEncoding(),
-                                               isForkMode, xmlReporter, consoleOutputReporter );
+                                               isForkMode, xmlReporter, outReporter, testsetReporter );
     }
 
     private boolean isSpecificTestSpecified()

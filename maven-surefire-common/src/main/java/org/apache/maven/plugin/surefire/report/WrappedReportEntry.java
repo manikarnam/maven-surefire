@@ -25,7 +25,6 @@ import org.apache.maven.surefire.report.TestSetReportEntry;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.maven.plugin.surefire.report.ReporterUtils.formatElapsedTime;
@@ -159,7 +158,7 @@ public class WrappedReportEntry
     {
         String sourceName = getSourceName();
         String sourceText = getSourceText();
-        return isBlank( sourceText ) || Objects.equals( sourceName, sourceText ) ? sourceName : sourceText;
+        return isBlank( sourceText ) ? sourceName : sourceText;
     }
 
     String getReportSourceName( String suffix )
@@ -176,7 +175,7 @@ public class WrappedReportEntry
     {
         String name = getName();
         String nameText = getNameText();
-        return isBlank( nameText ) || Objects.equals( name, nameText ) ? name : nameText;
+        return isBlank( nameText ) ? name : nameText;
     }
 
     public String getOutput( boolean trimStackTrace )
@@ -217,6 +216,12 @@ public class WrappedReportEntry
     public String getNameWithGroup()
     {
         return original.getNameWithGroup();
+    }
+
+    @Override
+    public String getReportNameWithGroup()
+    {
+        return original.getReportNameWithGroup();
     }
 
     @Override

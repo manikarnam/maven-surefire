@@ -41,22 +41,27 @@ public class ConsoleReporter
         extends StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats>
 {
     public static final String BRIEF = "brief";
-
     public static final String PLAIN = "plain";
-
     private static final String TEST_SET_STARTING_PREFIX = "Running ";
 
-    public ConsoleReporter( ConsoleLogger logger )
+    private final boolean usePhrasedClassNameInRunning;
+    private final boolean usePhrasedClassNameInTestCaseSummary;
+
+    public ConsoleReporter( ConsoleLogger logger,
+                            boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary )
     {
         super( logger );
+        this.usePhrasedClassNameInRunning = usePhrasedClassNameInRunning;
+        this.usePhrasedClassNameInTestCaseSummary = usePhrasedClassNameInTestCaseSummary;
     }
 
     @Override
     public void testSetStarting( TestSetReportEntry report )
     {
-        MessageBuilder builder = buffer();
+        MessageBuilder builder = buffer().a( TEST_SET_STARTING_PREFIX );
+        String runningTestCase = concatenateWithTestGroup( builder, report, usePhrasedClassNameInRunning );
         getConsoleLogger()
-                .info( concatenateWithTestGroup( builder.a( TEST_SET_STARTING_PREFIX ), report ) );
+                .info( runningTestCase );
     }
 
     @Override
@@ -69,7 +74,7 @@ public class ConsoleReporter
         boolean flakes = testSetStats.getSkipped() > 0;
         Level level = resolveLevel( success, failures, errors, skipped, flakes );
 
-        println( testSetStats.getColoredTestSetSummary( report ), level );
+        println( testSetStats.getColoredTestSetSummary( report, usePhrasedClassNameInTestCaseSummary ), level );
         for ( String testResult : testResults )
         {
             println( testResult, level );

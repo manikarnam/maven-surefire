@@ -26,6 +26,8 @@ import org.apache.maven.plugin.surefire.runorder.StatisticsReporter;
 import org.apache.maven.shared.utils.logging.MessageBuilder;
 import org.apache.maven.surefire.extensions.ConsoleOutputReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReportEventListener;
+import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEventListener;
+import org.apache.maven.surefire.extensions.StatelessTestsetInfoFileReportEventListener;
 import org.apache.maven.surefire.report.ReporterFactory;
 import org.apache.maven.surefire.report.RunListener;
 import org.apache.maven.surefire.report.RunStatistics;
@@ -115,14 +117,17 @@ public class DefaultReporterFactory
         return reportConfiguration.getReportsDirectory();
     }
 
-    private ConsoleReporter createConsoleReporter()
+    private StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createConsoleReporter()
     {
-        return shouldReportToConsole() ? new ConsoleReporter( consoleLogger ) : NullConsoleReporter.INSTANCE;
+        StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> consoleReporter =
+                reportConfiguration.instantiateConsoleReporter( consoleLogger );
+        return useNonNull( consoleReporter, NullConsoleReporter.INSTANCE );
     }
 
-    private FileReporter createFileReporter()
+    private StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats> createFileReporter()
     {
-        FileReporter fileReporter = reportConfiguration.instantiateFileReporter( forkNumber );
+        StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats> fileReporter =
+                reportConfiguration.instantiateFileReporter( forkNumber );
         return useNonNull( fileReporter, NullFileReporter.INSTANCE );
     }
 
@@ -144,13 +149,6 @@ public class DefaultReporterFactory
     {
         StatisticsReporter statisticsReporter = reportConfiguration.getStatisticsReporter();
         return useNonNull( statisticsReporter, NullStatisticsReporter.INSTANCE );
-    }
-
-    private boolean shouldReportToConsole()
-    {
-        return reportConfiguration.isUseFile()
-                       ? reportConfiguration.isPrintSummary()
-                       : reportConfiguration.isRedirectTestOutputToFile() || reportConfiguration.isBriefOrPlainFormat();
     }
 
     public void mergeFromOtherFactories( Collection<DefaultReporterFactory> factories )

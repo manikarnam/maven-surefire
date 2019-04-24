@@ -45,14 +45,14 @@ public class DefaultStatelessTestsetInfoReporter
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             ConsoleLogger logger )
     {
-        return new ConsoleReporter( logger );
+        return new ConsoleReporter( logger, false, false );
     }
 
     @Override
     public StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             File reportsDirectory, String reportNameSuffix, Charset encoding )
     {
-        return new FileReporter( reportsDirectory, reportNameSuffix, encoding, false );
+        return new FileReporter( reportsDirectory, reportNameSuffix, encoding, false, false, false );
     }
 
     @Override

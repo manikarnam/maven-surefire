@@ -236,6 +236,12 @@ public class SimpleReportEntry
     }
 
     @Override
+    public String getReportNameWithGroup()
+    {
+        return getSourceText();
+    }
+
+    @Override
     public Map<String, String> getSystemProperties()
     {
         return systemProperties;

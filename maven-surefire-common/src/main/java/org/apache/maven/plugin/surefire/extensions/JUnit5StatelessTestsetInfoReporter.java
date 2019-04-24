@@ -48,6 +48,24 @@ public class JUnit5StatelessTestsetInfoReporter
      */
     private boolean usePhrasedFileName;
 
+    /**
+     * Phrased class name of test case in the console log (see xxx)
+     * <em>Running xxx</em> or file report log <em>Test set: xxx</em>.
+     * {@code false} by default.
+     * <br>
+     * This action takes effect only in JUnit5 provider together with a test class annotated <em>DisplayName</em>.
+     */
+    private boolean usePhrasedClassNameInRunning;
+
+    /**
+     * Phrased class name of test case in the log (see xxx)
+     * <em>Tests run: ., Failures: ., Errors: ., Skipped: ., Time elapsed: . s, - in xxx</em>.
+     * {@code false} by default.
+     * <br>
+     * This action takes effect only in JUnit5 provider together with a test class annotated <em>DisplayName</em>.
+     */
+    private boolean usePhrasedClassNameInTestCaseSummary;
+
     public boolean isUsePhrasedFileName()
     {
         return usePhrasedFileName;
@@ -58,18 +76,40 @@ public class JUnit5StatelessTestsetInfoReporter
         this.usePhrasedFileName = usePhrasedFileName;
     }
 
+    public boolean isUsePhrasedClassNameInRunning()
+    {
+        return usePhrasedClassNameInRunning;
+    }
+
+    public void setUsePhrasedClassNameInRunning( boolean usePhrasedClassNameInRunning )
+    {
+        this.usePhrasedClassNameInRunning = usePhrasedClassNameInRunning;
+    }
+
+    public boolean isUsePhrasedClassNameInTestCaseSummary()
+    {
+        return usePhrasedClassNameInTestCaseSummary;
+    }
+
+    public void setUsePhrasedClassNameInTestCaseSummary( boolean usePhrasedClassNameInTestCaseSummary )
+    {
+        this.usePhrasedClassNameInTestCaseSummary = usePhrasedClassNameInTestCaseSummary;
+    }
+
     @Override
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             ConsoleLogger logger )
     {
-        return new ConsoleReporter( logger );
+        return new ConsoleReporter( logger, isUsePhrasedClassNameInRunning(),
+                                    isUsePhrasedClassNameInTestCaseSummary() );
     }
 
     @Override
     public StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             File reportsDirectory, String reportNameSuffix, Charset encoding )
     {
-        return new FileReporter( reportsDirectory, reportNameSuffix, encoding, isUsePhrasedFileName() );
+        return new FileReporter( reportsDirectory, reportNameSuffix, encoding, isUsePhrasedFileName(),
+                                 isUsePhrasedClassNameInRunning(), isUsePhrasedClassNameInTestCaseSummary() );
     }
 
     @Override

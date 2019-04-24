@@ -44,11 +44,16 @@ public class FileReporter
         extends StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats>
 {
     private final boolean usePhrasedFileName;
+    private final boolean usePhrasedClassNameInRunning;
+    private final boolean usePhrasedClassNameInTestCaseSummary;
 
-    public FileReporter( File reportsDirectory, String reportNameSuffix, Charset encoding, boolean usePhrasedFileName )
+    public FileReporter( File reportsDirectory, String reportNameSuffix, Charset encoding, boolean usePhrasedFileName,
+                         boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary )
     {
         super( reportsDirectory, reportNameSuffix, encoding );
         this.usePhrasedFileName = usePhrasedFileName;
+        this.usePhrasedClassNameInRunning = usePhrasedClassNameInRunning;
+        this.usePhrasedClassNameInTestCaseSummary = usePhrasedClassNameInTestCaseSummary;
     }
 
     static File getReportFile( File reportsDirectory, String reportEntryName, String reportNameSuffix,
@@ -65,7 +70,7 @@ public class FileReporter
         File reportFile = getReportFile( getReportsDirectory(),
                                          usePhrasedFileName ? report.getReportSourceName() : report.getSourceName(),
                                          getReportNameSuffix(),
-                              ".txt" );
+                                         ".txt" );
 
         File reportDir = reportFile.getParentFile();
 
@@ -77,13 +82,14 @@ public class FileReporter
             writer.write( "-------------------------------------------------------------------------------" );
             writer.newLine();
 
-            writer.write( "Test set: " + report.getSourceName() );
+            String tesSet = usePhrasedClassNameInRunning ? report.getReportSourceName() : report.getSourceName();
+            writer.write( "Test set: " + tesSet );
             writer.newLine();
 
             writer.write( "-------------------------------------------------------------------------------" );
             writer.newLine();
 
-            writer.write( testSetStats.getTestSetSummary( report ) );
+            writer.write( testSetStats.getTestSetSummary( report, usePhrasedClassNameInTestCaseSummary ) );
             writer.newLine();
             for ( String testResult : testResults )
             {

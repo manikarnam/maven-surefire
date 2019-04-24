@@ -54,7 +54,24 @@ public class JUnitPlatformIT
                 .verifyErrorFree( 7 );
 
         validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest.txt", UTF_8 )
-                 .assertContainsText( convertUnicodeToUTF8( "<< ✨ >>" ) );
+                 .assertContainsText( "<< ✨ >>" );
+
+        validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest.txt", UTF_8 )
+                .assertContainsText( "Test set: << ✨ >>" );
+
+        validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest.txt", UTF_8 )
+                .assertContainsText( " - in << ✨ >>" );
+
+
+        validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest-output.txt", UTF_8 )
+                .assertContainsText( "<< ✨ >>" );
+
+        validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest-output.txt", UTF_8 )
+                .assertContainsText( "73$71 ✔" );
+
+        validator.getSurefireReportsFile( "junitplatformenginejupiter.DisplayNameTest-output.txt", UTF_8 )
+                .assertContainsText( "73$72 ✔" );
+
 
         validator.getSurefireReportsFile( "TEST-junitplatformenginejupiter.DisplayNameTest.xml", UTF_8 )
         .assertContainsText( "testcase name=\"73$71 ✔\" classname=\"&lt;&lt; ✨ &gt;&gt;\"" )
