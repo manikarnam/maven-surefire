@@ -32,9 +32,7 @@ import org.junit.runners.Suite;
  */
 @Suite.SuiteClasses( {
     ClasspathTest.class,
-    CommandReaderTest.class,
     PropertiesWrapperTest.class,
-    SurefireReflectorTest.class,
     PpidCheckerTest.class,
     SystemUtilsTest.class
 } )
