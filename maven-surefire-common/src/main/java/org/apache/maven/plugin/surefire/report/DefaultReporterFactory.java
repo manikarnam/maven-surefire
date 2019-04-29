@@ -195,6 +195,7 @@ public class DefaultReporterFactory
         boolean printedFailures = printTestFailures( failure );
         boolean printedErrors = printTestFailures( error );
         boolean printedFlakes = printTestFailures( flake );
+        //todo since here: in IF statement: reportConfiguration.isPrintSummary()
         if ( printedFailures | printedErrors | printedFlakes )
         {
             log( "" );
@@ -269,7 +270,7 @@ public class DefaultReporterFactory
      * Merge all the TestMethodStats in each TestRunListeners and put results into flakyTests, failedTests and
      * errorTests, indexed by test class and method name. Update globalStatistics based on the result of the merge.
      */
-    void mergeTestHistoryResult()
+    private void mergeTestHistoryResult()
     {
         globalStats = new RunStatistics();
         flakyTests = new TreeMap<>();

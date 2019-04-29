@@ -124,6 +124,10 @@ public class JUnit5StatelessTestsetInfoReporter
                     .invoke( clone, isDisable() );
             cls.getMethod( "setUsePhrasedFileName", boolean.class )
                     .invoke( clone, isUsePhrasedFileName() );
+            cls.getMethod( "setUsePhrasedClassNameInTestCaseSummary", boolean.class )
+                    .invoke( clone, isUsePhrasedFileName() );
+            cls.getMethod( "setUsePhrasedClassNameInRunning", boolean.class )
+                    .invoke( clone, isUsePhrasedFileName() );
 
             return clone;
         }
@@ -139,6 +143,8 @@ public class JUnit5StatelessTestsetInfoReporter
         return "JUnit5StatelessTestsetInfoReporter{"
                 + "disable=" + isDisable()
                 + ", usePhrasedFileName=" + isUsePhrasedFileName()
+                + ", usePhrasedClassNameInRunning=" + isUsePhrasedClassNameInRunning()
+                + ", usePhrasedClassNameInTestCaseSummary=" + isUsePhrasedClassNameInTestCaseSummary()
                 + "}";
     }
 }

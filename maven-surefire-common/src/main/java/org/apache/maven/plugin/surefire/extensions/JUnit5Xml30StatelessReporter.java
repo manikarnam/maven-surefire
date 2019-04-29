@@ -147,7 +147,7 @@ public class JUnit5Xml30StatelessReporter
     @Override
     public String toString()
     {
-        return "StatelessReporter{"
+        return "JUnit5Xml30StatelessReporter{"
                 + "version=" + getVersion()
                 + ", disable=" + isDisable()
                 + ", usePhrasedFileName=" + getUsePhrasedFileName()

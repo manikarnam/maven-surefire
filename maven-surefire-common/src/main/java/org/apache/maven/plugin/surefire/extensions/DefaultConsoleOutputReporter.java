@@ -28,7 +28,8 @@ import java.io.File;
 import java.io.PrintStream;
 
 /**
- * Extension for logger.
+ * Extension for logger. This is a builder of {@link ConsoleOutputReportEventListener listeners}. The listeners handle
+ * test set events.
  *
  * @author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
  * @since 3.0.0-M4

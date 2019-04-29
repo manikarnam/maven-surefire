@@ -71,15 +71,14 @@ public class ConsoleOutputFileReporterTest
     public void testFileNameWithSuffix() throws IOException
     {
         File reportDir = new File( new File( System.getProperty( "user.dir" ), "target" ), "tmp2" );
-        //noinspection ResultOfMethodCallIgnored
-        reportDir.mkdirs();
         String suffixText = "sampleSuffixText";
         TestSetReportEntry reportEntry =
                 new SimpleReportEntry( getClass().getName(), null, getClass().getName(), null );
         ConsoleOutputFileReporter reporter =
                 new ConsoleOutputFileReporter( reportDir, suffixText, false, null, "UTF-8" );
         reporter.testSetStarting( reportEntry );
-        reporter.writeTestOutput( "some ", false, true );
+        reporter.writeTestOutput( null, true, true );
+        reporter.writeTestOutput( "some ", true, true );
         reporter.testSetCompleted( reportEntry );
         reporter.close();
 
@@ -91,6 +90,9 @@ public class ConsoleOutputFileReporterTest
         assertThat( FileUtils.fileRead( expectedReportFile, US_ASCII.name() ) )
                 .contains( "some " );
 
+        assertThat( expectedReportFile )
+                .hasSize( 9 + 2 * System.lineSeparator().length() );
+
         //noinspection ResultOfMethodCallIgnored
         expectedReportFile.delete();
     }
@@ -98,8 +100,6 @@ public class ConsoleOutputFileReporterTest
     public void testNullReportFile() throws IOException
     {
         File reportDir = new File( new File( System.getProperty( "user.dir" ), "target" ), "tmp3" );
-        //noinspection ResultOfMethodCallIgnored
-        reportDir.mkdirs();
         ConsoleOutputFileReporter reporter = new ConsoleOutputFileReporter( reportDir, null, false, null, "UTF-8" );
         reporter.writeTestOutput( "some text", false, true );
         reporter.testSetCompleted( new SimpleReportEntry( getClass().getName(), null, getClass().getName(), null ) );
@@ -120,8 +120,6 @@ public class ConsoleOutputFileReporterTest
     public void testConcurrentAccessReportFile() throws Exception
     {
         File reportDir = new File( new File( System.getProperty( "user.dir" ), "target" ), "tmp4" );
-        //noinspection ResultOfMethodCallIgnored
-        reportDir.mkdirs();
         final ConsoleOutputFileReporter reporter =
                 new ConsoleOutputFileReporter( reportDir, null, false, null, "UTF-8" );
         reporter.testSetStarting( new SimpleReportEntry( getClass().getName(), null, getClass().getName(), null ) );

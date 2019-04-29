@@ -145,7 +145,7 @@ public class TestSetRunListener
     @Override
     public void error( String message, Throwable t )
     {
-        consoleReporter.getConsoleLogger().error( message, t );
+        consoleReporter.getConsoleLogger().error( trimTrailingNewLine( message ), t );
     }
 
     @Override

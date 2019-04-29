@@ -151,11 +151,6 @@ public final class StartupReportConfiguration
         return redirectTestOutputToFile;
     }
 
-    public boolean isDisableXmlReport()
-    {
-        return xmlReporter.isDisable();
-    }
-
     public File getReportsDirectory()
     {
         return reportsDirectory;
@@ -184,7 +179,7 @@ public final class StartupReportConfiguration
                 new DefaultStatelessReportMojoConfiguration( resolveReportsDirectory( forkNumber ), reportNameSuffix,
                         trimStackTrace, rerunFailingTestsCount, xsdSchemaLocation, testClassMethodRunHistory );
 
-        return isDisableXmlReport() ? null : xmlReporter.createListener( xmlReporterConfig );
+        return xmlReporter.isDisable() ? null : xmlReporter.createListener( xmlReporterConfig );
     }
 
     public StatelessTestsetInfoFileReportEventListener<WrappedReportEntry, TestSetStats> instantiateFileReporter(
@@ -238,11 +233,6 @@ public final class StartupReportConfiguration
     public boolean isRequiresRunHistory()
     {
         return requiresRunHistory;
-    }
-
-    public PrintStream getOriginalSystemOut()
-    {
-        return originalSystemOut;
     }
 
     public String getXsdSchemaLocation()

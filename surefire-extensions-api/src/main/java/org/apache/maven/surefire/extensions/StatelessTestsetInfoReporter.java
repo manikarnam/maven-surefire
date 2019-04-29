@@ -55,10 +55,4 @@ public abstract class StatelessTestsetInfoReporter<R extends TestSetReportEntry,
     {
         this.disable = disable;
     }
-
-    @Override
-    public String toString()
-    {
-        return "StatelessTestsetInfoReporter{disable=" + disable + '}';
-    }
 }

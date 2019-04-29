@@ -69,13 +69,4 @@ public abstract class ConsoleOutputReporter
     {
         this.encoding = encoding;
     }
-
-    @Override
-    public String toString()
-    {
-        return "ConsoleOutputReporter{"
-                + "disable=" + isDisable()
-                + ", encoding=" + getEncoding()
-                + '}';
-    }
 }

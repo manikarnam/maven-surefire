@@ -78,7 +78,8 @@ public abstract class StatelessReporter<R extends TestSetReportEntry, S, C exten
     @Override
     public String toString()
     {
-        return "StatelessReporter{"
+        return getClass().getSimpleName()
+                + "{"
                 + "version=" + getVersion()
                 + ", disable=" + isDisable()
                 + '}';

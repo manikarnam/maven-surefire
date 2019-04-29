@@ -30,7 +30,7 @@ import org.apache.maven.surefire.report.TestSetReportEntry;
  */
 public interface ConsoleOutputReportEventListener
 {
-    void testSetStarting( TestSetReportEntry reportEntry );
+    void testSetStarting( TestSetReportEntry report );
     void testSetCompleted( TestSetReportEntry report );
     void close();
     void writeTestOutput( String output, boolean newLine, boolean stdout );

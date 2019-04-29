@@ -26,7 +26,8 @@ import org.apache.maven.surefire.extensions.StatelessReportEventListener;
 import org.apache.maven.surefire.extensions.StatelessReporter;
 
 /**
- * Default implementation for extension of {@link StatelessXmlReporter} in plugin.
+ * Default implementation for extension of {@link StatelessXmlReporter} in plugin. This is a builder of
+ * {@link StatelessReportEventListener listener}. The listener handles <em>testSetCompleted</em> event.
  *
  * author <a href="mailto:tibordigana@apache.org">Tibor Digana (tibor17)</a>
  * @since 3.0.0-M4

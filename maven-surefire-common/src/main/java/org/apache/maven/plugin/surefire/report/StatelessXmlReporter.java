@@ -82,7 +82,7 @@ import static org.apache.maven.surefire.util.internal.StringUtils.isBlank;
  * @see <a href="http://wiki.apache.org/ant/Proposals/EnhancedTestReports">Ant's format enhancement proposal</a>
  *      (not yet implemented by Ant 1.8.2)
  */
-@Deprecated // this is no more stateless due to existence of testClassMethodRunHistoryMap since of 2.19. Rename to StatefulXmlReporter in 3.0.
+//todo this is no more stateless due to existence of testClassMethodRunHistoryMap since of 2.19.
 public class StatelessXmlReporter
         implements StatelessReportEventListener<WrappedReportEntry, TestSetStats>
 {

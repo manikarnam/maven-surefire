@@ -414,6 +414,13 @@
       <artifactId>fest-assert</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.agent</artifactId>
+      <classifier>runtime</classifier>
+      <version>0.8.3</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -486,6 +493,7 @@
                 <goal>check</goal>
               </goals>
               <configuration>
+                <skip>true</skip>
                 <signature>
                   <groupId>org.codehaus.mojo.signature</groupId>
                   <artifactId>java17</artifactId>
@@ -501,10 +509,13 @@
           <configuration>
             <!-- NOTE: Be sure to isolate the Surefire version under test from the version running the tests! -->
             <useSystemClassLoader>false</useSystemClassLoader>
-            <argLine>${jvm.args.tests} ${jacoco.agent} -Dnet.bytebuddy.experimental=true</argLine>
+            <argLine>${jvm.args.tests}</argLine><!-- -Dnet.bytebuddy.experimental=true ${jacoco.agent}-->
             <useFile>false</useFile>
             <redirectTestOutputToFile>false</redirectTestOutputToFile>
             <jvm>${jdk.home}/bin/java</jvm>
+            <systemPropertyVariables>
+              <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+            </systemPropertyVariables>
           </configuration>
         </plugin>
         <plugin>
@@ -537,24 +548,37 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>jacoco-agent</id>
+            <id>instrument</id>
+            <phase>generate-test-resources</phase>
             <goals>
-              <goal>prepare-agent</goal>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>restore-classes</id>
+            <goals>
+              <goal>restore-instrumented-classes</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <propertyName>jacoco.agent</propertyName>
-          <append>true</append>
-          <inclNoLocationClasses>true</inclNoLocationClasses>
           <haltOnFailure>false</haltOnFailure>
-          <jmx>false</jmx>
           <includes>
             <include>**/failsafe/*</include>
             <include>**/failsafe/**/*</include>
             <include>**/surefire/*</include>
             <include>**/surefire/**/*</include>
           </includes>
+          <excludes>
+            <exclude>**/HelpMojo.class</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
