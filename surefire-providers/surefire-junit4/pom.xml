@@ -31,6 +31,10 @@
   <name>SureFire JUnit4 Runner</name>
   <description>SureFire JUnit 4.0+ Runner</description>
 
+  <properties>
+    <jacoco.instrumentation.skip>true</jacoco.instrumentation.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -44,4 +48,25 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>${jvm.args.tests} ${jacoco.agent}</argLine>
+          <includes>
+            <include>**/JUnit4SuiteTest.java</include>
+          </includes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-shadefire</artifactId>
+            <version>3.0.0-M3</version> <!-- ${shadedVersion}, but resolved due to https://issues.apache.org/jira/browse/MRELEASE-799 -->
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -102,6 +102,7 @@
     <maven.compiler.testSource>1.${javaVersion}</maven.compiler.testSource>
     <maven.compiler.testTarget>1.${javaVersion}</maven.compiler.testTarget>
     <jvm.args.tests>-server -XX:+UseG1GC -Xms128m -Xmx144m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:SoftRefLRUPolicyMSPerMB=50 -Djava.awt.headless=true -Djdk.net.URLClassPath.disableClassPathURLCheck=true</jvm.args.tests>
+    <jacoco.instrumentation.skip>false</jacoco.instrumentation.skip>
   </properties>
 
   <dependencyManagement>
@@ -493,7 +494,6 @@
                 <goal>check</goal>
               </goals>
               <configuration>
-                <skip>true</skip>
                 <signature>
                   <groupId>org.codehaus.mojo.signature</groupId>
                   <artifactId>java17</artifactId>
@@ -514,7 +514,7 @@
             <redirectTestOutputToFile>false</redirectTestOutputToFile>
             <jvm>${jdk.home}/bin/java</jvm>
             <systemPropertyVariables>
-              <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+              <jacoco-agent.destfile>${project.build.directory}/jacoco.exec</jacoco-agent.destfile>
             </systemPropertyVariables>
           </configuration>
         </plugin>
@@ -548,17 +548,29 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>jacoco-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>instrument</id>
             <phase>generate-test-resources</phase>
             <goals>
               <goal>instrument</goal>
             </goals>
+            <configuration>
+              <skip>${jacoco.instrumentation.skip}</skip>
+            </configuration>
           </execution>
           <execution>
             <id>restore-classes</id>
             <goals>
               <goal>restore-instrumented-classes</goal>
             </goals>
+            <configuration>
+              <skip>${jacoco.instrumentation.skip}</skip>
+            </configuration>
           </execution>
           <execution>
             <id>jacoco-report</id>
@@ -569,7 +581,11 @@
           </execution>
         </executions>
         <configuration>
+          <propertyName>jacoco.agent</propertyName>
+          <append>true</append>
+          <inclNoLocationClasses>true</inclNoLocationClasses>
           <haltOnFailure>false</haltOnFailure>
+          <jmx>false</jmx>
           <includes>
             <include>**/failsafe/*</include>
             <include>**/failsafe/**/*</include>
@@ -578,6 +594,9 @@
           </includes>
           <excludes>
             <exclude>**/HelpMojo.class</exclude>
+            <exclude>**/shadefire/**/*</exclude>
+            <exclude>org/jacoco/**/*</exclude>
+            <exclude>com/vladium/emma/rt/*</exclude>
           </excludes>
         </configuration>
       </plugin>

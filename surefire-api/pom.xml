@@ -31,6 +31,10 @@
   <name>SureFire API</name>
   <description>API used in Surefire and Failsafe MOJO, Booter, Common and test framework providers.</description>
 
+  <properties>
+    <jacoco.instrumentation.skip>true</jacoco.instrumentation.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
@@ -62,6 +66,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>${jvm.args.tests} ${jacoco.agent}</argLine>
           <includes>
             <include>**/JUnit4SuiteTest.java</include>
           </includes>
