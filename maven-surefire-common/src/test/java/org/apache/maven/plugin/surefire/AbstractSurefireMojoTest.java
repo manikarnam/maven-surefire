@@ -1578,7 +1578,7 @@ public class AbstractSurefireMojoTest
     }
 
     public static class Mojo
-            extends AbstractSurefireMojo
+            extends AbstractSurefireMojo implements SurefireReportParameters
     {
         private JUnitPlatformProviderInfo createJUnitPlatformProviderInfo( Artifact providerArtifact,
                                                                            TestClassPath testClasspathWrapper )
@@ -1636,6 +1636,18 @@ public class AbstractSurefireMojoTest
 
         @Override
         public void setSkip( boolean skip )
+        {
+
+        }
+
+        @Override
+        public boolean isTestFailureIgnore()
+        {
+            return false;
+        }
+
+        @Override
+        public void setTestFailureIgnore( boolean testFailureIgnore )
         {
 
         }
