@@ -28,6 +28,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.junit.Assume.assumeTrue;
@@ -62,7 +65,7 @@ public class UmlautDirIT
     }
 
     @Test
-    public void surefire1617()
+    public void surefire1617() throws Exception
     {
         assumeTrue( IS_OS_LINUX );
         unpackWithNewLocalRepo()
@@ -102,13 +105,12 @@ public class UmlautDirIT
         return unpack;
     }
 
-    private SurefireLauncher unpackWithNewLocalRepo()
+    private SurefireLauncher unpackWithNewLocalRepo() throws IOException
     {
-        File target = new File( System.getProperty( "user.dir" ), "target" );
-        File newLocalRepo = new File( target, "local repo for : SUREFIRE-1617" );
-        //noinspection ResultOfMethodCallIgnored
-        newLocalRepo.mkdir();
-        System.setProperty( "maven.repo.local", newLocalRepo.getPath() );
+        Path newLocalRepo = Paths.get( System.getProperty( "user.dir" ), "target", "local repo for : SUREFIRE-1617" );
+        Path defaultLocalRepo = Paths.get( new MavenLauncher( getClass(), "", null ).getLocalRepository() );
+        Files.createSymbolicLink( newLocalRepo, defaultLocalRepo );
+        System.setProperty( "maven.repo.local", newLocalRepo.toString() );
         return unpack( "junit-pathWithUmlaut" );
     }
 }

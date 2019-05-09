@@ -77,7 +77,7 @@ public final class MavenLauncher
         resetCliOptions();
     }
 
-    MavenLauncher( Class testClass, String resourceName, String suffix )
+    public MavenLauncher( Class testClass, String resourceName, String suffix )
     {
         this( testClass, resourceName, suffix, null );
     }
@@ -374,6 +374,11 @@ public final class MavenLauncher
 
     public void setForkJvm( boolean forkJvm ) {
         getVerifier().setForkJvm( forkJvm );
+    }
+
+    public String getLocalRepository()
+    {
+        return getVerifier().getLocalRepository();
     }
 
     private Verifier getVerifier()
