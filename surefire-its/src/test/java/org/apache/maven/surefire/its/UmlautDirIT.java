@@ -19,14 +19,18 @@ package org.apache.maven.surefire.its;
  * under the License.
  */
 
-import org.apache.maven.it.VerificationException;
 import org.apache.maven.surefire.its.fixture.MavenLauncher;
 import org.apache.maven.surefire.its.fixture.SurefireJUnit4IntegrationTestCase;
 import org.apache.maven.surefire.its.fixture.SurefireLauncher;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Test a directory with an umlaut
@@ -36,11 +40,42 @@ import java.io.IOException;
 public class UmlautDirIT
     extends SurefireJUnit4IntegrationTestCase
 {
+    private String localRepo;
+
+    @Before
+    public void backupLocalRepo()
+    {
+        localRepo = System.getProperty( "maven.repo.local" );
+    }
+
+    @After
+    public void restoreLocalRepo()
+    {
+        if ( localRepo == null )
+        {
+            System.clearProperty( "maven.repo.local" );
+        }
+        else
+        {
+            System.setProperty( "maven.repo.local", localRepo );
+        }
+    }
+
+    @Test
+    public void surefire1617()
+    {
+        assumeTrue( IS_OS_LINUX );
+        unpackWithNewLocalRepo()
+                .executeTest()
+                .verifyErrorFreeLog()
+                .assertTestSuiteResults( 1, 0, 0, 0 );
+    }
+
     @Test
     public void testUmlaut()
         throws Exception
     {
-        specialUnpack( "1" )
+        unpackToGermanUmplautDirectory( "1" )
                 .executeTest()
                 .verifyErrorFreeLog()
                 .assertTestSuiteResults( 1, 0, 0, 0 );
@@ -50,13 +85,13 @@ public class UmlautDirIT
     public void testUmlautIsolatedClassLoader()
         throws Exception
     {
-        specialUnpack( "2" )
+        unpackToGermanUmplautDirectory( "2" )
                 .useSystemClassLoader( false )
                 .executeTest()
                 .assertTestSuiteResults( 1, 0, 0, 0 );
     }
 
-    SurefireLauncher specialUnpack( String postfix )
+    private SurefireLauncher unpackToGermanUmplautDirectory( String postfix )
         throws IOException
     {
         SurefireLauncher unpack = unpack( "junit-pathWithUmlaut" );
@@ -65,5 +100,15 @@ public class UmlautDirIT
         File dest = new File( maven.getUnpackedAt().getParentFile().getPath(), "/junit-pathWith\u00DCmlaut_" + postfix );
         maven.moveUnpackTo( dest );
         return unpack;
+    }
+
+    private SurefireLauncher unpackWithNewLocalRepo()
+    {
+        File target = new File( System.getProperty( "user.dir" ), "target" );
+        File newLocalRepo = new File( target, "local repo for : SUREFIRE-1617" );
+        //noinspection ResultOfMethodCallIgnored
+        newLocalRepo.mkdir();
+        System.setProperty( "maven.repo.local", newLocalRepo.getPath() );
+        return unpack( "junit-pathWithUmlaut" );
     }
 }
